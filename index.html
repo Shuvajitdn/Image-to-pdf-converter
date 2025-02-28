@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PDF</title>
+    <style>
+        * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -ms-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial;
+            font-size: 16px;
+            margin: 0;
+            background: linear-gradient(133deg, #4abeb2, #3c57d2);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            width: 450px;
+            padding: 30px;
+            border-radius: 5px;
+        }
+
+        .button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        button, .upload {
+            width: 220px;
+            margin: 50px 20px 10px 20px;
+            text-align: center;
+            position: relative;
+            padding: 10px 5px;
+            font-size: 17px;
+            outline: none;
+            color: #fff;
+            border: none;
+            background-color: #023780;
+            border-radius: 5px;
+        }
+
+        .upload {
+            background: #a74901;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        #showImg {
+            width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="button">
+        <div class="upload">
+            <input type="file" onchange="loadFile(event)" accept=".png, .jpg, .jpeg">
+            Upload Image
+        </div>
+        <button onclick="pdfDown()">Download To PDF</button>
+    </div>
+    <img id="showImg" src="" alt="Image will appear here">
+</div>
+
+<!-- Include jsPDF library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+    var newImage;
+
+    function loadFile(event) {
+        var showImg = document.getElementById('showImg');
+        showImg.src = URL.createObjectURL(event.target.files[0]);
+
+        newImage = document.createElement('img');
+        newImage.src = URL.createObjectURL(event.target.files[0]);
+
+        showImg.onload = function() {
+            URL.revokeObjectURL(showImg.src); // free memory
+        }
+    };
+
+    function pdfDown() {
+        if (newImage) {
+            console.log(newImage);
+            const { jsPDF } = window.jspdf;
+            var doc = new jsPDF();
+            doc.addImage(newImage.src, 'JPEG', 10, 10, 180, 160); // adjust dimensions if necessary
+            doc.save('ImgToPDF.pdf');
+        } else {
+            alert('Please upload an image first.');
+        }
+    }
+</script>
+
+</body>
+</html>
